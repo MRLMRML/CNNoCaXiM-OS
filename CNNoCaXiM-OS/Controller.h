@@ -11,7 +11,7 @@ class Controller
 {
 public:
 	Controller() = default;
-	Controller(const int NID, const int PEID) : m_NID{ NID }, m_PEID{ PEID } {}
+	Controller(const int NID, const std::vector<int>& PEIDs) : m_NID{ NID }, m_PEIDs{ PEIDs } {}
 
 	void runOneStep();
 
@@ -40,16 +40,16 @@ public:
 	ControllerState m_controllerState{};
 	int m_weightDataIndex{};
 	int m_inputDataIndex{};
-	int m_reformedInputDataIndex{};
 	Port m_port{};
 	MasterInterface m_masterInterface{ };
 	int m_NID{}; // node ID of DRAM
-	int m_PEID{}; // node ID of PE
+	std::vector<int> m_PEIDs{}; // node ID of PEs
 	std::vector<std::vector<DATA_PRECISION>> m_reformedInputData{};
 	std::vector<DATA_PRECISION> m_outputData{};
 	std::shared_ptr<Clock> m_localClock{ nullptr };
 
 private:
+	std::vector<PacketReorderBufferLine> m_packetReorderBuffer{}; // store the output packet coming in and reorder it
 	std::deque<Flit> m_sourceQueue{}; // store the flits to be sent
 	std::vector<Flit> m_flitReorderBuffer{}; // store the received flits; if received TailFlit/HeadTailFlit, lookup the buffer and form the packet 
 };

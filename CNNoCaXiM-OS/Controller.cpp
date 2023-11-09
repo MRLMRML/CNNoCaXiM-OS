@@ -75,15 +75,18 @@ void Controller::receiveReadWeightResponse()
 
 		if (m_localClock->executeLocalEvent())
 		{
-			Packet readResponse{};
-			readResponse.destination = m_PEID;
-			readResponse.xID = m_masterInterface.readDataChannel.RID; // should be -1
-			readResponse.RWQB = PacketType::ReadResponse;
-			readResponse.MID = m_PEID;
-			readResponse.SID = m_NID;
-			readResponse.xDATA = m_masterInterface.readDataChannel.RDATA;
+			for (auto& PEID : m_PEIDs)
+			{
+				Packet readResponse{};
+				readResponse.destination = PEID;
+				readResponse.xID = m_masterInterface.readDataChannel.RID; // should be -1
+				readResponse.RWQB = PacketType::ReadResponse;
+				readResponse.MID = PEID;
+				readResponse.SID = m_NID;
+				readResponse.xDATA = m_masterInterface.readDataChannel.RDATA;
 
-			sendPacket(readResponse);
+				sendPacket(readResponse);
+			}
 
 			m_masterInterface.readDataChannel.RREADY = true;
 			m_controllerState = ControllerState::I;
@@ -138,18 +141,19 @@ void Controller::receiveReadInputResponse()
 		{
 			reformInputData(m_masterInterface.readDataChannel.RDATA);
 
-			Packet readResponse{};
-			readResponse.destination = m_PEID;
-			readResponse.xID = m_masterInterface.readDataChannel.RID;
-			readResponse.RWQB = PacketType::ReadResponse;
-			readResponse.MID = m_PEID;
-			readResponse.SID = m_NID;
-			readResponse.SEQID = m_reformedInputDataIndex; // keep the reformed input data sequenced
-			readResponse.xDATA = m_reformedInputData.at(m_reformedInputDataIndex);
+			for (int i{}; i < m_PEIDs.size(); ++i)
+			{
+				Packet readResponse{};
+				readResponse.destination = m_PEIDs.at(i);
+				readResponse.xID = m_masterInterface.readDataChannel.RID;
+				readResponse.RWQB = PacketType::ReadResponse;
+				readResponse.MID = m_PEIDs.at(i);
+				readResponse.SID = m_NID;
+				readResponse.SEQID = i; // keep the reformed input data sequenced
+				readResponse.xDATA = m_reformedInputData.at(i);
 
-			sendPacket(readResponse);
-			
-			++m_reformedInputDataIndex;
+				sendPacket(readResponse);
+			}
 			
 			m_masterInterface.readDataChannel.RREADY = true;
 			m_controllerState = ControllerState::O;
@@ -317,8 +321,8 @@ void Controller::receivePacket(const Packet& packet)
 
 void Controller::sendWriteOutputRequest(const Packet& packet)
 {
-	m_outputData.insert(m_outputData.end(), packet.xDATA.begin(), packet.xDATA.end());
-	if (m_outputData.size() == m_reformedInputData.size())
+	m_packetReorderBuffer.push_back({ packet.SEQID, packet.xDATA });
+	if (m_packetReorderBuffer.size() == m_reformedInputData.size())
 	{
 		if (!m_localClock->isWaitingForExecution())
 		{
@@ -328,6 +332,17 @@ void Controller::sendWriteOutputRequest(const Packet& packet)
 
 		if (m_localClock->executeLocalEvent())
 		{
+			for (int i{}; i < m_packetReorderBuffer.size(); ++i)
+			{
+				for (auto& line : m_packetReorderBuffer)
+				{
+					if (line.SEQID == i)
+					{
+						m_outputData.insert(m_outputData.end(), line.xData.begin(), line.xData.end());
+					}
+				}
+			}
+
 			m_masterInterface.writeAddressChannel.AWVALID = true;
 			m_masterInterface.writeAddressChannel.AWID = packet.xID;
 			m_masterInterface.writeAddressChannel.AWADDR = OUTPUT_DATA_START_LOCATION + packet.AxADDR;
@@ -340,39 +355,6 @@ void Controller::sendWriteOutputRequest(const Packet& packet)
 			m_localClock->tickTriggerClock(1);
 			m_localClock->tickExecutionClock(1);
 			m_localClock->toggleWaitingForExecution();
-		}
-	}
-	else
-	{
-		if (!m_localClock->isWaitingForExecution())
-		{
-			m_localClock->tickExecutionClock(EXECUTION_TIME_CONTROLLER_OO - 1);
-			m_localClock->toggleWaitingForExecution();
-		}
-
-		if (m_localClock->executeLocalEvent())
-		{
-			if (m_reformedInputDataIndex < m_reformedInputData.size())
-			{
-				Packet readResponse{};
-				readResponse.destination = m_PEID;
-				readResponse.xID = m_masterInterface.readDataChannel.RID;
-				readResponse.RWQB = PacketType::ReadResponse;
-				readResponse.MID = m_PEID;
-				readResponse.SID = m_NID;
-				readResponse.SEQID = m_reformedInputDataIndex; // keep the reformed input data sequenced
-				readResponse.xDATA = m_reformedInputData.at(m_reformedInputDataIndex);
-
-				sendPacket(readResponse);
-
-				++m_reformedInputDataIndex;
-
-				m_controllerState = ControllerState::O;
-
-				m_localClock->tickTriggerClock(1);
-				m_localClock->tickExecutionClock(1);
-				m_localClock->toggleWaitingForExecution();
-			}
 		}
 	}
 }
@@ -390,8 +372,8 @@ void Controller::receiveWriteOutputResponse()
 		if (m_localClock->executeLocalEvent())
 		{
 			m_reformedInputData.clear();
+			m_packetReorderBuffer.clear();
 			m_outputData.clear();
-			m_reformedInputDataIndex = 0;
 
 			m_masterInterface.writeResponseChannel.BREADY = true;
 			m_controllerState = ControllerState::I;

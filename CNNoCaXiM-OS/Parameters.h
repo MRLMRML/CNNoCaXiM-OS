@@ -1,5 +1,5 @@
 #pragma once
-//#define DEBUG
+#define DEBUG
 //#define DEBUGROUTER
 //#define MEASURE
 #define CLOCK
@@ -24,7 +24,6 @@
 #define EXECUTION_TIME_CONTROLLER_NW 1
 #define EXECUTION_TIME_CONTROLLER_WI 1
 #define EXECUTION_TIME_CONTROLLER_IO 1
-#define EXECUTION_TIME_CONTROLLER_OO 1
 #define EXECUTION_TIME_CONTROLLER_OB 1
 #define EXECUTION_TIME_CONTROLLER_BI 1
 
@@ -44,8 +43,8 @@
 
 //////////////////////// NoC parameters ////////////////////////
 // Network dimension
-#define NETWORK_DIMENSION_X 2
-#define NETWORK_DIMENSION_Y 1
+#define NETWORK_DIMENSION_X 4
+#define NETWORK_DIMENSION_Y 3
 #define ROUTER_NUMBER NETWORK_DIMENSION_X * NETWORK_DIMENSION_Y
 // choose network type:
 #define MESH

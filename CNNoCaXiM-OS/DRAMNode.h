@@ -10,8 +10,8 @@ class DRAMNode
 public:
 	DRAMNode() = default;
 
-	DRAMNode(const int NID, const int PEID)
-		: m_controller{ std::make_unique<Controller>(NID, PEID)},
+	DRAMNode(const int NID, const std::vector<int>& PEIDs)
+		: m_controller{ std::make_unique<Controller>(NID, PEIDs)},
 		m_DRAM{ std::make_unique<DRAM>() },
 		m_slaveChannel{ std::make_unique<Channel>() },
 		m_localClock{ std::make_shared<Clock>() }
