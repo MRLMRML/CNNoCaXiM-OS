@@ -122,21 +122,25 @@ void NI::sendReadResponse(const Packet& packet)
 		if (m_niState == NIState::W)
 			m_localClock->tickExecutionClock(EXECUTION_TIME_NI_WI - 1);
 		else if (m_niState == NIState::I)
+		{
 			m_localClock->tickExecutionClock(EXECUTION_TIME_NI_IO - 1);
+			m_timer->recordPacketTimeAppendStart(packet.SEQID);
+		}
 		m_localClock->toggleWaitingForExecution();
 	}
 
 	if (m_localClock->executeLocalEvent())
 	{
 		m_slaveInterface.readDataChannel.RVALID = true;
-		m_slaveInterface.readDataChannel.RID = packet.xID;
+		m_slaveInterface.readDataChannel.RID = packet.SEQID;
 		m_slaveInterface.readDataChannel.RDATA = packet.xDATA;
-		m_SEQID = packet.SEQID;
+		m_xID = packet.xID;
 		if (m_niState == NIState::W)
 			m_niState = NIState::I;
 		else if (m_niState == NIState::I)
 		{
 			m_niState = NIState::O;
+			m_timer->recordPacketTimeAppendFinish(packet.SEQID);
 		}
 
 		m_localClock->tickTriggerClock(1);
@@ -153,21 +157,26 @@ void NI::receiveWriteOutputRequest()
 		{
 			m_localClock->tickExecutionClock(EXECUTION_TIME_NI_OI - 1);
 			m_localClock->toggleWaitingForExecution();
+			
+			m_timer->recordPacketTimeAppendStart(m_slaveInterface.writeAddressChannel.AWID);
 		}
 
 		if (m_localClock->executeLocalEvent())
 		{
 			Packet writeRequest{};
 			writeRequest.destination = m_DRAMID;
-			writeRequest.xID = m_slaveInterface.writeAddressChannel.AWID;
+			writeRequest.xID = m_xID;
 			writeRequest.RWQB = PacketType::WriteRequest;
 			writeRequest.MID = m_NID;
 			writeRequest.SID = m_DRAMID;
-			writeRequest.SEQID = m_SEQID;
-			writeRequest.AxADDR = m_slaveInterface.writeAddressChannel.AWADDR;
+			writeRequest.SEQID = m_slaveInterface.writeAddressChannel.AWID;
+			writeRequest.AxADDR = m_xID; // AxADDR is the xID of the packet
 			writeRequest.xDATA = m_slaveInterface.writeDataChannel.WDATA;
 
 			sendPacket(writeRequest);
+
+			m_timer->recordPacketTimeAppendFinish(writeRequest.SEQID);
+
 			m_slaveInterface.writeAddressChannel.AWREADY = true;
 			m_slaveInterface.writeDataChannel.WREADY = true;
 			m_niState = NIState::I;

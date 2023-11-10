@@ -3,6 +3,8 @@
 //#define DEBUG_ROUTER
 //#define MEASURE
 #define CLOCK
+#define TIMER
+#define TIMER_DETAILED
 
 #define DATA_PRECISION float
 

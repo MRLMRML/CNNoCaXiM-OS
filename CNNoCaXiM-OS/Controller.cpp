@@ -135,6 +135,8 @@ void Controller::receiveReadInputResponse()
 		{
 			m_localClock->tickExecutionClock(EXECUTION_TIME_CONTROLLER_IO - 1);
 			m_localClock->toggleWaitingForExecution();
+
+			m_timer->recordStartTime();
 		}
 
 		if (m_localClock->executeLocalEvent())
@@ -153,6 +155,8 @@ void Controller::receiveReadInputResponse()
 				readResponse.xDATA = m_reformedInputData.at(i);
 
 				sendPacket(readResponse);
+
+				m_timer->recordPacketTimeInitializeFinish(readResponse.SEQID);
 			}
 			
 			m_masterInterface.readDataChannel.RREADY = true;
@@ -322,6 +326,7 @@ void Controller::receivePacket(const Packet& packet)
 void Controller::sendWriteOutputRequest(const Packet& packet)
 {
 	m_packetReorderBuffer.push_back({ packet.SEQID, packet.xDATA });
+	m_timer->recordPacketTimeAppendStart(packet.SEQID);
 	if (m_packetReorderBuffer.size() == m_reformedInputData.size())
 	{
 		if (!m_localClock->isWaitingForExecution())
@@ -349,6 +354,8 @@ void Controller::sendWriteOutputRequest(const Packet& packet)
 
 			m_masterInterface.writeDataChannel.WVALID = true;
 			m_masterInterface.writeDataChannel.WDATA = m_outputData;
+
+			m_timer->recordFinishTime();
 
 			m_controllerState = ControllerState::B;
 
