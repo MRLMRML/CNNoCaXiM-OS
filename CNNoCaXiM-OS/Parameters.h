@@ -1,6 +1,6 @@
 #pragma once
-#define DEBUG
-//#define DEBUGROUTER
+//#define DEBUG
+//#define DEBUG_ROUTER
 //#define MEASURE
 #define CLOCK
 
