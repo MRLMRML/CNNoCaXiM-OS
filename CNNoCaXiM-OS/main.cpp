@@ -37,7 +37,7 @@ int main()
 	DRAMNode* dramNode{ new DRAMNode{0, {1, 2, 3, 4, 5, 6, 7, 8, 9}} };
 
 	// mount nodes on the network
-	network->mountNode({ 0, 0 }, dramNode);
+	network->mountNode({ 1, 0 }, dramNode);
 	network->mountNode({ 0, 1 }, peNode1);
 	network->mountNode({ 0, 2 }, peNode2);
 	network->mountNode({ 0, 3 }, peNode3);
