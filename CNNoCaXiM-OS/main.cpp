@@ -57,6 +57,7 @@ int main()
 	{
 		network->updateEnable();
 		dramNode->updateEnable();
+		peNode0->updateEnable();
 		peNode1->updateEnable();
 		peNode2->updateEnable();
 		peNode3->updateEnable();
@@ -65,9 +66,9 @@ int main()
 		peNode6->updateEnable();
 		peNode7->updateEnable();
 		peNode8->updateEnable();
-		peNode9->updateEnable();
 
 		dramNode->runOneStep();
+		peNode0->runOneStep();
 		peNode1->runOneStep();
 		peNode2->runOneStep();
 		peNode3->runOneStep();
@@ -76,12 +77,12 @@ int main()
 		peNode6->runOneStep();
 		peNode7->runOneStep();
 		peNode8->runOneStep();
-		peNode9->runOneStep();
 		network->runOneStep();
 		globalClock.tickGlobalClock();
 	}
 
 	// sanitation
+	delete peNode0;
 	delete peNode1;
 	delete peNode2;
 	delete peNode3;
@@ -90,7 +91,6 @@ int main()
 	delete peNode6;
 	delete peNode7;
 	delete peNode8;
-	delete peNode9;
 	delete dramNode;
 	delete network;
 }
