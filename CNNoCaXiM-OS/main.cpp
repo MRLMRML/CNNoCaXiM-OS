@@ -23,30 +23,30 @@ int main()
 	network->printRouterIDs();
 
 	// create PE nodes
-	PENode* peNode1{ new PENode{1, relu} };
-	PENode* peNode2{ new PENode{2, relu} };
-	PENode* peNode3{ new PENode{3, relu} };
-	PENode* peNode4{ new PENode{4, relu} };
-	PENode* peNode5{ new PENode{5, relu} };
-	PENode* peNode6{ new PENode{6, relu} };
-	PENode* peNode7{ new PENode{7, relu} };
-	PENode* peNode8{ new PENode{8, relu} };
-	PENode* peNode9{ new PENode{9, relu} };
+	PENode* peNode0{ new PENode{1, relu} };
+	PENode* peNode1{ new PENode{2, relu} };
+	PENode* peNode2{ new PENode{3, relu} };
+	PENode* peNode3{ new PENode{4, relu} };
+	PENode* peNode4{ new PENode{5, relu} };
+	PENode* peNode5{ new PENode{6, relu} };
+	PENode* peNode6{ new PENode{7, relu} };
+	PENode* peNode7{ new PENode{8, relu} };
+	PENode* peNode8{ new PENode{9, relu} };
 
 	// create DRAM node
 	DRAMNode* dramNode{ new DRAMNode{0, {1, 2, 3, 4, 5, 6, 7, 8, 9}} };
 
 	// mount nodes on the network
-	network->mountNode({ 0, 0 }, dramNode);
-	network->mountNode({ 0, 1 }, peNode1);
-	network->mountNode({ 0, 2 }, peNode2);
+	network->mountNode({ 1, 2 }, dramNode);
+	network->mountNode({ 0, 1 }, peNode0);
+	network->mountNode({ 2, 3 }, peNode1);
+	network->mountNode({ 1, 0 }, peNode2);
 	network->mountNode({ 0, 3 }, peNode3);
-	network->mountNode({ 0, 4 }, peNode4);
-	network->mountNode({ 0, 5 }, peNode5);
-	network->mountNode({ 0, 6 }, peNode6);
-	network->mountNode({ 0, 7 }, peNode7);
-	network->mountNode({ 0, 8 }, peNode8);
-	network->mountNode({ 0, 9 }, peNode9);
+	network->mountNode({ 2, 1 }, peNode4);
+	network->mountNode({ 0, 2 }, peNode5);
+	network->mountNode({ 2, 2 }, peNode6);
+	network->mountNode({ 1, 1 }, peNode7);
+	network->mountNode({ 1, 3 }, peNode8);
 
 	network->printNodeIDs();
 	network->viewMappingTable();
