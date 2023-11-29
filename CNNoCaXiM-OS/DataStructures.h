@@ -129,7 +129,7 @@ struct Flit
 		const int SID,
 		const int SEQID)
 		:
-		port{ port }, 
+		port{ port },
 		virtualChannel{ virtualChannel },
 		flitType{ flitType },
 		destination{ destination },
@@ -193,17 +193,17 @@ struct Flit
 		AxADDR{ packet.AxADDR },
 		xDATA{ packet.xDATA } {}
 
-	PortType port{PortType::Unselected};
-	int virtualChannel{-1};
+	PortType port{ PortType::Unselected };
+	int virtualChannel{ -1 };
 	FlitType flitType{ FlitType::DefaultFlit };
-	int bodyFlitNo{-1};
-	int destination{-1};
-	int xID{-1};
-	PacketType RWQB{PacketType::Default};
-	int MID{-1};
-	int SID{-1};
-	int SEQID{-1};
-	int AxADDR{-1};
+	int bodyFlitNo{ -1 };
+	int destination{ -1 };
+	int xID{ -1 };
+	PacketType RWQB{ PacketType::Default };
+	int MID{ -1 };
+	int SID{ -1 };
+	int SEQID{ -1 };
+	int AxADDR{ -1 };
 	std::vector<DATA_PRECISION> xDATA{};
 };
 
@@ -227,6 +227,7 @@ enum class ControllerState
 {
 	N,
 	W,
+	K,
 	I,
 	O,
 	B
@@ -237,6 +238,7 @@ std::ostream& operator<<(std::ostream& stream, const ControllerState& controller
 enum class NIState
 {
 	W,
+	K,
 	I,
 	O
 };

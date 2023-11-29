@@ -51,6 +51,7 @@ void DRAM::receiveReadRequest()
 				m_slaveInterface.readDataChannel.RDATA = t_RDATA;
 				m_slaveInterface.readAddressChannel.ARREADY = true;
 				logDebug(" DRAM: read request for weight data received ");
+				m_timer->recordFinishTime();
 			}
 			else if (m_slaveInterface.readAddressChannel.ARADDR >= INPUT_DATA_START_LOCATION
 				&& m_slaveInterface.readAddressChannel.ARADDR < INPUT_DATA_START_LOCATION + INPUT_DATA_LINE_COUNT)
@@ -59,7 +60,7 @@ void DRAM::receiveReadRequest()
 				std::string line{};
 				std::istringstream lineInString{};
 				std::string data{};
-				for (int i{}; i < m_slaveInterface.readAddressChannel.ARADDR - WEIGHT_DATA_START_LOCATION + 1; ++i)
+				for (int i{}; i < m_slaveInterface.readAddressChannel.ARADDR - INPUT_DATA_START_LOCATION + 1; ++i)
 					std::getline(readInputData, line);
 				lineInString.str(line);
 				while (std::getline(lineInString, data, ','))
@@ -127,7 +128,7 @@ void DRAM::receiveWriteRequest()
 			}
 			else
 				throw std::out_of_range{ " DRAM: write request out of range " };
-		
+
 			sendWriteResponse();
 		}
 	}

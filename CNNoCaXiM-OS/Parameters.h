@@ -24,7 +24,8 @@
 //////////////////////// Timing ////////////////////////
 // Controller
 #define EXECUTION_TIME_CONTROLLER_NW 1
-#define EXECUTION_TIME_CONTROLLER_WI 1
+#define EXECUTION_TIME_CONTROLLER_WK 1
+#define EXECUTION_TIME_CONTROLLER_KI 1
 #define EXECUTION_TIME_CONTROLLER_IO 1
 #define EXECUTION_TIME_CONTROLLER_OB 1
 #define EXECUTION_TIME_CONTROLLER_BI 1
@@ -36,10 +37,11 @@
 
 // PE timing
 #define EXECUTION_TIME_PE_WI 1
-#define EXECUTION_TIME_PE_II 1 // PE calculation time, not used
+#define EXECUTION_TIME_PE_II 20 // PE calculation time, not used
 
 // NI timing
-#define EXECUTION_TIME_NI_WI 1
+#define EXECUTION_TIME_NI_WK 1
+#define EXECUTION_TIME_NI_KI 1
 #define EXECUTION_TIME_NI_IO 1
 #define EXECUTION_TIME_NI_OI 1
 
@@ -49,8 +51,8 @@
 #define NETWORK_DIMENSION_Y 4
 #define ROUTER_NUMBER NETWORK_DIMENSION_X * NETWORK_DIMENSION_Y
 // choose network type:
-//#define MESH
-#define TORUS
+#define MESH
+//#define TORUS
 
 // Virtual channel
 #define VC_NUMBER 8
