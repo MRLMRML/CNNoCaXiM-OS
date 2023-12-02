@@ -47,8 +47,8 @@
 
 //////////////////////// NoC parameters ////////////////////////
 // Network dimension
-#define NETWORK_DIMENSION_X 4
-#define NETWORK_DIMENSION_Y 4
+#define NETWORK_DIMENSION_X 10
+#define NETWORK_DIMENSION_Y 1
 #define ROUTER_NUMBER NETWORK_DIMENSION_X * NETWORK_DIMENSION_Y
 // choose network type:
 #define MESH

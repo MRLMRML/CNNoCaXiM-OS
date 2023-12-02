@@ -37,16 +37,16 @@ int main()
 	DRAMNode* dramNode{ new DRAMNode{0, {1, 2, 3, 4, 5, 6, 7, 8, 9}} };
 
 	// mount nodes on the network
-	network->mountNode({ 1, 2 }, dramNode);
+	network->mountNode({ 0, 0 }, dramNode);
 	network->mountNode({ 0, 1 }, peNode0);
-	network->mountNode({ 2, 3 }, peNode1);
-	network->mountNode({ 1, 0 }, peNode2);
-	network->mountNode({ 0, 3 }, peNode3);
-	network->mountNode({ 2, 1 }, peNode4);
-	network->mountNode({ 0, 2 }, peNode5);
-	network->mountNode({ 2, 2 }, peNode6);
-	network->mountNode({ 1, 1 }, peNode7);
-	network->mountNode({ 1, 3 }, peNode8);
+	network->mountNode({ 0, 2 }, peNode1);
+	network->mountNode({ 0, 3 }, peNode2);
+	network->mountNode({ 0, 4 }, peNode3);
+	network->mountNode({ 0, 5 }, peNode4);
+	network->mountNode({ 0, 6 }, peNode5);
+	network->mountNode({ 0, 7 }, peNode6);
+	network->mountNode({ 0, 8 }, peNode7);
+	network->mountNode({ 0, 9 }, peNode8);
 
 	network->printNodeIDs();
 	network->viewMappingTable();
